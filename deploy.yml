@@ -1,0 +1,39 @@
+---
+- name: Pull Docker Image from Docker Hub
+  hosts: localhost
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  remote_user: regent
+  become: false
+
+  tasks:
+
+    - name: Pull Docker Image
+      community.docker.docker_image:
+        name: "regentflame11/sysmon"
+        source: pull
+        force_source: true
+      register: docker_pull_result
+
+    - name: Display Docker Pull Result
+      debug:
+        var: docker_pull_result
+
+    - name: Stop and remove existing container if present
+      community.docker.docker_container:
+        name: sysmon
+        state: absent
+
+    - name: Run sysmon container
+      community.docker.docker_container:
+        name: sysmon
+        image: "regentflame11/sysmon"
+        state: started
+        detach: true
+        tty: true
+        command: /bin/bash
+      register: container_result
+
+    - name: Display container status
+      debug:
+        msg: "Container '{{ container_result.container.Name }}' is running with ID {{ container_result.container.Id[:12] }}"
