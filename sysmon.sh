@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Clear terminal screen
-clear
 
 # Define Colors for beautiful CLI output
 GREEN='\033[0;32m'
